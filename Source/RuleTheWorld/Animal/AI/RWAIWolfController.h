@@ -1,0 +1,29 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "AIController.h"
+#include "RWAIWolfController.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class RULETHEWORLD_API ARWAIWolfController : public AAIController
+{
+	GENERATED_BODY()
+
+public:
+	ARWAIWolfController();
+
+	virtual void OnPossess(APawn* InPawn) override;
+
+// BehaviorTree
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BT)
+	TObjectPtr<UBehaviorTree> BehaviorTreeAsset;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BT)
+	TObjectPtr<UBlackboardData> BlackboardAsset;
+};
