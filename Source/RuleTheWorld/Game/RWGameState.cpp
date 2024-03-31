@@ -38,8 +38,8 @@ void ARWGameState::UpdateDate(float DeltaSeconds)
 		DayScore++;
 		CurrentTime -= OneDay;
 	}
-	// 하루가 얼마나 지났는지
-	DayProgressPercent = CurrentTime / OneDay;
+	// 하루가 얼마나 지났는지 퍼센트로 표시
+	DayProgressPercent = 100 * (CurrentTime / OneDay);
 }
 
 

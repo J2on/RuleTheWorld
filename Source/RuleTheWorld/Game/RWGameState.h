@@ -24,13 +24,13 @@ public:
 
 // Day and Night
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Day)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Day, Meta = (AllowPrivateAccess = "true"))
 	float CurrentTime;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Day)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Day, Meta = (AllowPrivateAccess = "true"))
 	float DayProgressPercent;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Day)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Day, Meta = (AllowPrivateAccess = "true"))
 	int32 DayScore;
 
 	void UpdateDate(float DeltaSeconds);

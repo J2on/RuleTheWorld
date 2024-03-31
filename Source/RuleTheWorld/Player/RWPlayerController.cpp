@@ -212,7 +212,7 @@ void ARWPlayerController::DisableLook(const FInputActionValue& Value)
 
 void ARWPlayerController::ControllerJump(const FInputActionValue& Value)
 {
-	PlayerPawn->Jump();
+	PlayerPawn->Jump();	
 }
 
 void ARWPlayerController::ControllerStopJumping(const FInputActionValue& Value)
