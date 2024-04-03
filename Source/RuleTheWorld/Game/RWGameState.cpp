@@ -21,7 +21,6 @@ void ARWGameState::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 	
 	UpdateDate(DeltaSeconds);
-	UE_LOG(LogTemp, Log, TEXT("Game State - Day : %d CurrentTime : %f ProgressPercent : %f"), DayScore, CurrentTime, DayProgressPercent);
 }
 
 float ARWGameState::GetDayProgressPercent()
@@ -37,6 +36,7 @@ void ARWGameState::UpdateDate(float DeltaSeconds)
 	{
 		DayScore++;
 		CurrentTime -= OneDay;
+		UE_LOG(LogTemp, Log, TEXT("Game State - Day : %d CurrentTime : %f ProgressPercent : %f"), DayScore, CurrentTime, DayProgressPercent);
 	}
 	// 하루가 얼마나 지났는지 퍼센트로 표시
 	DayProgressPercent = 100 * (CurrentTime / OneDay);

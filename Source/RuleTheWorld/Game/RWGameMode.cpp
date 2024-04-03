@@ -3,6 +3,7 @@
 #include "Game/RWGameMode.h"
 
 #include "GameFramework/GameState.h"
+#include "GameFramework/PlayerState.h"
 #include "Player/RWPlayerController.h"
 
 ARWGameMode::ARWGameMode()
@@ -30,5 +31,11 @@ ARWGameMode::ARWGameMode()
     {
     	GameStateClass = GameStateClassRef.Class;
     }
-	 
+
+	// Set PlayerState
+	static ConstructorHelpers::FClassFinder<APlayerState> PlayerStateClassRef(TEXT("/Script/RuleTheWorld.RWPlayerState"));
+	if(PlayerStateClassRef.Class)
+	{
+		PlayerStateClass = PlayerStateClassRef.Class;
+	}
 }

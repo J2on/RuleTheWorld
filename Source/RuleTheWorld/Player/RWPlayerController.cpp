@@ -5,8 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
-#include "RWPlayerState.h"
-#include "AbilitySystemComponent.h"
+
 #include "Character/RWCharacterPlayer.h"
 #include "Character/RWComboAttackData.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -64,14 +63,8 @@ ARWPlayerController::ARWPlayerController()
 		SneakingAction = InputActionSneakingRef.Object;
 	}
 	
-	// GAS
-	ASC = nullptr;
 }
 
-UAbilitySystemComponent* ARWPlayerController::GetAbilitySystemComponent() const
-{
-	return ASC;
-}
 
 void ARWPlayerController::BeginPlay()
 {
@@ -116,41 +109,6 @@ void ARWPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ARWPlayerController::GasInputReleased, 0);
 		//EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Completed, this, &ARWPlayerController::GasInputPressed, 1);
 	}*/
-}
-
-void ARWPlayerController::OnPossess(APawn* InPawn)
-{
-	Super::OnPossess(InPawn);
-	ARWPlayerState* RWPS = GetPlayerState<ARWPlayerState>();
-
-	if(RWPS)
-	{
-		ASC = RWPS->GetAbilitySystemComponent();
-		// Owner Actor와 Avatar Actor가 정해졌으니 초기화
-		ASC->InitAbilityActorInfo(RWPS, this);
-		
-		// 어빌리티 마다의 IUnput ID 부여 
-		
-		for(const auto& StartAbility : StartAbilities)
-		{
-			FGameplayAbilitySpec StartSpec(StartAbility);
-			ASC->GiveAbility(StartSpec);
-		}
-		
-		/* Input 보류
-		for(const auto& StartInputAbility : StartInputAbilities) // 초기 어빌리티 부여
-		{
-			FGameplayAbilitySpec StartSpec(StartInputAbility.Value);
-			StartSpec.InputID = StartInputAbility.Key; // Key 값이 입력번호로 설정됨
-			ASC->GiveAbility(StartSpec);
-		}
-		*/
-
-		SetupInputComponent(); // 서버에서 Input Component 바인딩
-		// 강의에서 SetupGasInputComponent()를 만들어 사용했지만, 기존 함수를 사용해 봄.
-
-		ConsoleCommand(TEXT("showdebug abilitysystem"));
-	}
 }
 
 void ARWPlayerController::Move(const FInputActionValue& Value)

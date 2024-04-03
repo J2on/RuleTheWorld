@@ -5,26 +5,22 @@
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
 #include "InputActionValue.h"
-#include "AbilitySystemInterface.h"
 #include "RWPlayerController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RULETHEWORLD_API ARWPlayerController : public APlayerController, public IAbilitySystemInterface
+class RULETHEWORLD_API ARWPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 public:
 	ARWPlayerController();
-	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 	
 public:
 	virtual void BeginPlay() override;
 	
 	virtual void SetupInputComponent() override;
-
-	virtual void OnPossess(APawn* InPawn) override;
 
 // Character
 protected:
@@ -77,24 +73,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "True"))
 	uint8 bIsSneaking:1;
-
-protected:
-	UPROPERTY(EditAnywhere, Category = GAS)
-	TObjectPtr<class UAbilitySystemComponent> ASC;
-	
-	// 처음부터 부여할 어빌리티dml 목록 <- 내용물은 블루프린트에서 설정
-	UPROPERTY(EditAnywhere, Category=GAS)
-	TArray<TSubclassOf<class UGameplayAbility>> StartAbilities;
-
-	UPROPERTY(EditAnywhere, Category=GAS)
-	TMap<int32, TSubclassOf<class UGameplayAbility>> StartInputAbilities;
-
-	
-	/* Input 보류
-	void SetupGasInputComponent();
-	void GasInputPressed(int32 InputID);
-	void GasInputReleased(int32 InputID);
-	*/
 	
 // Combo Attack Section
 protected:
