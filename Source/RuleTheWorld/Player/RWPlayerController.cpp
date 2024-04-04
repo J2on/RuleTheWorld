@@ -81,7 +81,8 @@ void ARWPlayerController::BeginPlay()
 
 	// Player
 	PlayerPawn = CastChecked<ARWCharacterPlayer>(GetPawn());
-	
+
+	ComboAttackMontages = {ComboAttackMontage1, ComboAttackMontage2, ComboAttackMontage3, ComboAttackMontage4};
 }
 
 void ARWPlayerController::SetupInputComponent()
@@ -101,14 +102,7 @@ void ARWPlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &ARWPlayerController::Attack);
 	EnhancedInputComponent->BindAction(SneakingAction, ETriggerEvent::Triggered, this, &ARWPlayerController::Sneaking);
 	EnhancedInputComponent->BindAction(SneakingAction, ETriggerEvent::Completed, this, &ARWPlayerController::StopSneaking);
-
-	/*if(IsValid(ASC) && IsValid(InputComponent))
-	{// 플레이어의 input Component가 EnhancedInput인지 확인
-		//EnhancedInput은 InputId(마지막 요소)를 통해 추가적인 정보를 전달해 줄 수 있음, 위에 PossessedBy 함수에서 각 어빌리티 마다의 Id정보를 할당해서 각 입력마다 다른 함수가 작동하도록 함
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Triggered, this, &ARWPlayerController::GasInputPressed, 0); 
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ARWPlayerController::GasInputReleased, 0);
-		//EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Completed, this, &ARWPlayerController::GasInputPressed, 1);
-	}*/
+	
 }
 
 void ARWPlayerController::Move(const FInputActionValue& Value)
@@ -205,7 +199,7 @@ void ARWPlayerController::StopSneaking(const FInputActionValue& Value)
 
 void ARWPlayerController::ProcessComboCommand()
 {
-	if(CurrentCombo == 0)
+	/*if(CurrentCombo == 0)
 	{
 		ComboActionBegin();
 		return;
@@ -218,9 +212,19 @@ void ARWPlayerController::ProcessComboCommand()
 	else
 	{
 		bHasNextComboCommand = true;
+	}*/
+
+	if(CurrentCombo == 0)
+	{
+		ComboAction();
+	}
+	else
+	{
+		bHasNextComboCommand = true;
 	}
 }
 
+/* 강의에서 사용된 콤보 액션의 형태. 각 섹션이 연결되는 부분이 너무 부자연스러워 교체함
 void ARWPlayerController::ComboActionBegin()
 {
 	// Combo Status
@@ -238,7 +242,7 @@ void ARWPlayerController::ComboActionBegin()
 	FOnMontageEnded EndDelegate;
 	EndDelegate.BindUObject(this, &ARWPlayerController::ComboActionEnd);
 	AnimInstance->Montage_SetEndDelegate(EndDelegate, ComboAttackMontage);
-
+	
 	// Timer Start
 	ComboTimerHandle.Invalidate();
 	SetComboCheckTimer();
@@ -275,5 +279,39 @@ void ARWPlayerController::ComboCheck()
 		AnimInstance->Montage_JumpToSection(NextSection, ComboAttackMontage);
 		SetComboCheckTimer();
 		bHasNextComboCommand = false;
+	}
+}*/
+
+void ARWPlayerController::ComboAction()
+{
+	// Movement Setting
+	PlayerPawn->GetCharacterMovement()->SetMovementMode(MOVE_None);
+
+	// Animation Setting
+	const float AttackSpeedRate = 1.0f;
+	UAnimInstance* AnimInstance = PlayerPawn->GetMesh()->GetAnimInstance();
+	AnimInstance->Montage_Play(ComboAttackMontages[CurrentCombo], AttackSpeedRate);
+	
+	bHasNextComboCommand = false;
+	
+	// Combo Status 
+	CurrentCombo = FMath::Clamp(CurrentCombo + 1, 1, 3);
+	GetWorld()->GetTimerManager().SetTimer(AttackTimerHandle, this, &ARWPlayerController::CheckInput, 1.0f, false);
+}
+
+void ARWPlayerController::CheckInput()
+{
+	AttackTimerHandle.Invalidate();
+	PlayerPawn->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+
+	// Non Attack
+	if(!bHasNextComboCommand)
+	{
+		CurrentCombo = 0;
+	}
+	else // Next Attack
+	{
+		bHasNextComboCommand = false;
+		ComboAction();
 	}
 }

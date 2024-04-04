@@ -26,6 +26,7 @@ void URWAnimNotify_AttackHitCheck::Notify(USkeletalMeshComponent* MeshComp, UAni
 			FGameplayEventData PayLoadData; // Empty 인자로 넣기 위해
 			
 			// ASC를 가진 Actor에 Event를 발동
+			// TriggTriggerGamePlayTag(블루프린트에서 지정)를 가진 Ability를 Actor가 수행하도록 함
 			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(OwnerActor, TriggerGamePlayTag, PayLoadData);
 		}
 	}

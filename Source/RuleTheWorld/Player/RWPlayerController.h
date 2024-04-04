@@ -76,22 +76,39 @@ protected:
 	
 // Combo Attack Section
 protected:
+	/*
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<class UAnimMontage> ComboAttackMontage; 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
 	TObjectPtr<class URWComboAttackData> ComboAttackData; 
-	
-	
-	void ProcessComboCommand();
-
 	void ComboActionBegin();
 	void ComboActionEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded);
 	void SetComboCheckTimer();
 	void ComboCheck();
-
-	// Local Variable
-	int32 CurrentCombo = 0;
 	FTimerHandle ComboTimerHandle;
+	*/
+	
+	
+	
+	int32 CurrentCombo = 0;
 	uint8 bHasNextComboCommand:1 = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<class UAnimMontage> ComboAttackMontage1;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<class UAnimMontage> ComboAttackMontage2;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<class UAnimMontage> ComboAttackMontage3;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TObjectPtr<class UAnimMontage> ComboAttackMontage4;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
+	TArray<TObjectPtr<class UAnimMontage>> ComboAttackMontages;
+
+	void ProcessComboCommand();
+	void ComboAction();
+	void CheckInput();
+	FTimerHandle AttackTimerHandle;
+	
 };
