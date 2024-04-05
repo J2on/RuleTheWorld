@@ -10,6 +10,7 @@
 #include "Character/RWComboAttackData.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
+constexpr int32 MaxCombo = 3;
 
 ARWPlayerController::ARWPlayerController()
 {
@@ -294,9 +295,19 @@ void ARWPlayerController::ComboAction()
 	
 	bHasNextComboCommand = false;
 	
-	// Combo Status 
-	CurrentCombo = FMath::Clamp(CurrentCombo + 1, 1, 3);
-	GetWorld()->GetTimerManager().SetTimer(AttackTimerHandle, this, &ARWPlayerController::CheckInput, 1.0f, false);
+	// Combo Status
+	float RateTime; 
+	if(CurrentCombo == MaxCombo)
+	{
+		CurrentCombo = 1;
+		RateTime = 1.5f;
+	}
+	else
+	{
+		CurrentCombo = FMath::Clamp(CurrentCombo + 1, 1, MaxCombo);
+		RateTime = 1.0f;
+	}
+	GetWorld()->GetTimerManager().SetTimer(AttackTimerHandle, this, &ARWPlayerController::CheckInput, RateTime, false);
 }
 
 void ARWPlayerController::CheckInput()
