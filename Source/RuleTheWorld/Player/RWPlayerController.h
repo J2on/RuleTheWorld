@@ -73,6 +73,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "True"))
 	uint8 bIsSneaking:1;
+
+	FTimerHandle JumpTimerHandle;
 	
 // Combo Attack Section
 protected:

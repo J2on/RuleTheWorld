@@ -7,7 +7,6 @@
 #include "EnhancedInputSubsystems.h"
 
 #include "Character/RWCharacterPlayer.h"
-#include "Character/RWComboAttackData.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 constexpr int32 MaxCombo = 3;
@@ -200,21 +199,6 @@ void ARWPlayerController::StopSneaking(const FInputActionValue& Value)
 
 void ARWPlayerController::ProcessComboCommand()
 {
-	/*if(CurrentCombo == 0)
-	{
-		ComboActionBegin();
-		return;
-	}
-
-	if(!ComboTimerHandle.IsValid())
-	{
-		bHasNextComboCommand = false;
-	}
-	else
-	{
-		bHasNextComboCommand = true;
-	}*/
-
 	if(CurrentCombo == 0)
 	{
 		ComboAction();
@@ -224,64 +208,6 @@ void ARWPlayerController::ProcessComboCommand()
 		bHasNextComboCommand = true;
 	}
 }
-
-/* 강의에서 사용된 콤보 액션의 형태. 각 섹션이 연결되는 부분이 너무 부자연스러워 교체함
-void ARWPlayerController::ComboActionBegin()
-{
-	// Combo Status
-	CurrentCombo = 1;
-
-	// Movement Setting
-	PlayerPawn->GetCharacterMovement()->SetMovementMode(MOVE_None);
-
-	// Animation Setting
-	const float AttackSpeedRate = 1.0f;
-	UAnimInstance* AnimInstance = PlayerPawn->GetMesh()->GetAnimInstance();
-	AnimInstance->Montage_Play(ComboAttackMontage, AttackSpeedRate);
-
-	// Delegate
-	FOnMontageEnded EndDelegate;
-	EndDelegate.BindUObject(this, &ARWPlayerController::ComboActionEnd);
-	AnimInstance->Montage_SetEndDelegate(EndDelegate, ComboAttackMontage);
-	
-	// Timer Start
-	ComboTimerHandle.Invalidate();
-	SetComboCheckTimer();
-}
-
-void ARWPlayerController::ComboActionEnd(UAnimMontage* TargetMontage, bool IsProperlyEnded)
-{
-	ensure(CurrentCombo != 0);
-	CurrentCombo = 0;
-	PlayerPawn->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-}
-
-void ARWPlayerController::SetComboCheckTimer()
-{
-	int32 ComboIndex = CurrentCombo - 1;
-	ensure(ComboAttackData->EffectiveFrameCount.IsValidIndex(ComboIndex));
-	const float AttackSppedRate = 1.0f;
-	float ComboEffectiveTime = (ComboAttackData->EffectiveFrameCount[ComboIndex] / ComboAttackData->FrameRate) / AttackSppedRate;
-	if(ComboEffectiveTime > 0.0f)
-	{
-		GetWorld()->GetTimerManager().SetTimer(ComboTimerHandle, this, &ARWPlayerController::ComboCheck, ComboEffectiveTime, false);
-	}
-}
-
-void ARWPlayerController::ComboCheck()
-{
-	ComboTimerHandle.Invalidate(); // 초기화
-	if(bHasNextComboCommand)
-	{
-		UAnimInstance* AnimInstance = PlayerPawn->GetMesh()->GetAnimInstance();
-
-		CurrentCombo = FMath::Clamp(CurrentCombo + 1, 1, ComboAttackData->MaxComboCount);
-		FName NextSection = *FString::Printf(TEXT("%s%d"), *ComboAttackData->MontageSectionNamePrefix, CurrentCombo);
-		AnimInstance->Montage_JumpToSection(NextSection, ComboAttackMontage);
-		SetComboCheckTimer();
-		bHasNextComboCommand = false;
-	}
-}*/
 
 void ARWPlayerController::ComboAction()
 {
