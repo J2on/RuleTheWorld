@@ -15,9 +15,9 @@ public:
 	// Sets default values for this character's properties
 	ARWCharacterBase();
 
-// Item
+// Bounding Box
 protected:
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Item")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "BoundingBox")
 	TObjectPtr<class UBoxComponent> CollisionBox;
 
 	UFUNCTION()
@@ -26,10 +26,15 @@ protected:
 	void OnOverlapEnd(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 public:
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Item")
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "BoundingBox")
 	TObjectPtr<class ARWInteractableActor> CollisionedItem;
-
-	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "Item")
-	uint8 bIsItemInBound:1;
 	
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "BoundingBox")
+	uint8 bIsItemInBound:1;
+
+public:
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "BoundingBox")
+	TObjectPtr<class APawn> CollisionedPawn;
+	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "BoundingBox")
+	uint8 bIsAnimalInBound:1;
 };

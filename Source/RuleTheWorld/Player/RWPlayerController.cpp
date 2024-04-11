@@ -90,8 +90,9 @@ void ARWPlayerController::BeginPlay()
 
 	// Player
 	PlayerPawn = CastChecked<ARWCharacterPlayer>(GetPawn());
-
+	AnimInstance = PlayerPawn->GetMesh()->GetAnimInstance();
 	ComboAttackMontages = {ComboAttackMontage1, ComboAttackMontage2, ComboAttackMontage3, ComboAttackMontage4};
+	ComboKickMontages = {ComboKickMontage1, ComboKickMontage2, ComboKickMontage3, ComboKickMontage4};
 }
 
 void ARWPlayerController::SetupInputComponent()
@@ -232,8 +233,16 @@ void ARWPlayerController::ComboAction()
 
 	// Animation Setting
 	const float AttackSpeedRate = 1.0f;
-	UAnimInstance* AnimInstance = PlayerPawn->GetMesh()->GetAnimInstance();
-	AnimInstance->Montage_Play(ComboAttackMontages[CurrentCombo], AttackSpeedRate);
+
+	if(PlayerPawn->bIsAnimalInBound)
+	{ // 근처에 동물이 있다면 발차기 공격을 수행
+		AnimInstance->Montage_Play(ComboKickMontages[CurrentCombo], AttackSpeedRate);
+	}
+	else
+	{ // 그게 아니면 일반 공격(펀치) 수행
+		AnimInstance->Montage_Play(ComboAttackMontages[CurrentCombo], AttackSpeedRate);
+	}
+	
 	
 	bHasNextComboCommand = false;
 	

@@ -3,10 +3,12 @@
 
 #include "Character/RWCharacterBase.h"
 
+#include "Animal/RWAnimalBase.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/AnimMontage.h"
 #include "Components/BoxComponent.h"
+#include "Animal/RWAnimalBase.h"
 #include "Object/RWInteractableActor.h"
 
 // Sets default values
@@ -22,7 +24,7 @@ ARWCharacterBase::ARWCharacterBase()
 
 
 	// Capsule
-	GetCapsuleComponent()->InitCapsuleSize(42.f,96.f);
+	GetCapsuleComponent()->InitCapsuleSize(60.f,96.f);
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 
 	// Movement
@@ -33,6 +35,7 @@ ARWCharacterBase::ARWCharacterBase()
 	GetCharacterMovement()->MaxWalkSpeed = 500.0f;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
+	
 	
 	// Mesh
 	GetMesh()->SetRelativeLocationAndRotation(FVector(0.0f, 0.0f, -100.0f), FRotator(0.0f, -90.f,0.0f));
@@ -55,12 +58,16 @@ ARWCharacterBase::ARWCharacterBase()
 	// Item
 	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
 	CollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	CollisionBox->SetCollisionResponseToAllChannels(ECR_Block);
+	CollisionBox->SetCollisionResponseToAllChannels(ECR_Overlap);
 	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ARWCharacterBase::OnOverlapBegin);
 	CollisionBox->OnComponentEndOverlap.AddDynamic(this, &ARWCharacterBase::OnOverlapEnd);
 	CollisionBox->SetupAttachment(RootComponent);
 	CollisionedItem = nullptr;
 	bIsItemInBound = false;
+
+	// 
+	CollisionedPawn = nullptr;
+	bIsAnimalInBound = false;
 }
 
 void ARWCharacterBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
@@ -68,18 +75,52 @@ void ARWCharacterBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActo
 {
 	// 잡고있는 item이 없고, RWInteractableActor인 경우
 	ARWInteractableActor* OtherInteractableActor = Cast<ARWInteractableActor>(OtherActor);
-	if(OtherInteractableActor && CollisionedItem == nullptr)
+	if(OtherInteractableActor)
 	{
 		CollisionedItem = OtherInteractableActor;
 		bIsItemInBound = true;
+		UE_LOG(LogTemp, Log, TEXT("Item In"));
+	}
+	else
+	{ // Item이 아니라면 Pawn인지 확인
+		
+		APawn* OtherPawn = Cast<APawn>(OtherActor);
+		if(OtherPawn)
+		{
+			CollisionedPawn = OtherPawn;
+			if(OtherActor->IsA<ARWAnimalBase>())
+			{
+				bIsAnimalInBound = true;
+			}
+			UE_LOG(LogTemp, Log, TEXT("Pawn In"));
+		}
 	}
 }
 
 void ARWCharacterBase::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	CollisionedItem = nullptr;
-	bIsItemInBound = false;
+	// Bounding Box 내에 Collision 되었던 것이 Item인 경우
+	ARWInteractableActor* OtherInteractableActor = Cast<ARWInteractableActor>(OtherActor);
+	if(OtherInteractableActor == CollisionedItem && OtherInteractableActor != nullptr)
+	{
+		CollisionedItem = nullptr;
+		bIsItemInBound = false;
+		UE_LOG(LogTemp, Log, TEXT("Item Out"));
+	}
+	else
+	{
+		APawn* OtherPawn = Cast<APawn>(OtherActor);
+		if(OtherPawn == CollisionedPawn && OtherPawn != nullptr)
+		{
+			if(CollisionedPawn->IsA<ARWAnimalBase>())
+			{
+				bIsAnimalInBound = false;
+			}	
+			CollisionedPawn = nullptr;
+		UE_LOG(LogTemp, Log, TEXT("Pawn Out"));
+		}
+	}
 }
 
 
