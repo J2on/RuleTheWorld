@@ -6,6 +6,8 @@
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Animation/AnimMontage.h"
+#include "Components/BoxComponent.h"
+#include "Object/RWInteractableActor.h"
 
 // Sets default values
 ARWCharacterBase::ARWCharacterBase()
@@ -26,7 +28,7 @@ ARWCharacterBase::ARWCharacterBase()
 	// Movement
 	GetCharacterMovement()->bOrientRotationToMovement = true;
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f);
-	GetCharacterMovement()->JumpZVelocity = 500.f;
+	GetCharacterMovement()->JumpZVelocity = 420.f;
 	GetCharacterMovement()->AirControl = 0.35f;
 	GetCharacterMovement()->MaxWalkSpeed = 500.0f;
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
@@ -49,7 +51,35 @@ ARWCharacterBase::ARWCharacterBase()
 	{
 		GetMesh()->SetAnimInstanceClass(AnimInstanceClassRef.Class);
 	}
-	 
+
+	// Item
+	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
+	CollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	CollisionBox->SetCollisionResponseToAllChannels(ECR_Block);
+	CollisionBox->OnComponentBeginOverlap.AddDynamic(this, &ARWCharacterBase::OnOverlapBegin);
+	CollisionBox->OnComponentEndOverlap.AddDynamic(this, &ARWCharacterBase::OnOverlapEnd);
+	CollisionBox->SetupAttachment(RootComponent);
+	CollisionedItem = nullptr;
+	bIsItemInBound = false;
+}
+
+void ARWCharacterBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	// 잡고있는 item이 없고, RWInteractableActor인 경우
+	ARWInteractableActor* OtherInteractableActor = Cast<ARWInteractableActor>(OtherActor);
+	if(OtherInteractableActor && CollisionedItem == nullptr)
+	{
+		CollisionedItem = OtherInteractableActor;
+		bIsItemInBound = true;
+	}
+}
+
+void ARWCharacterBase::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	CollisionedItem = nullptr;
+	bIsItemInBound = false;
 }
 
 

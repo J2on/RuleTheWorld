@@ -52,6 +52,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category =  Input, Meta = (AllowPrivateAccess = "True"))
 	TObjectPtr<class UInputAction> SneakingAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category =  Input, Meta = (AllowPrivateAccess = "True"))
+	TObjectPtr<class UInputAction> PickUpAction;
 	
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
@@ -64,6 +67,7 @@ protected:
 	void Attack(const FInputActionValue& Value);
 	void Sneaking(const FInputActionValue& Value);
 	void StopSneaking(const FInputActionValue& Value);
+	void PickUp(const FInputActionValue& Value);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "True"))
 	uint8 bIsEnableLook:1;
@@ -78,21 +82,6 @@ protected:
 	
 // Combo Attack Section
 protected:
-	/*
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	TObjectPtr<class UAnimMontage> ComboAttackMontage; 
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animation)
-	TObjectPtr<class URWComboAttackData> ComboAttackData; 
-	void ComboActionBegin();
-	void ComboActionEnd(class UAnimMontage* TargetMontage, bool IsProperlyEnded);
-	void SetComboCheckTimer();
-	void ComboCheck();
-	FTimerHandle ComboTimerHandle;
-	*/
-	
-	
-	
 	int32 CurrentCombo = 0;
 	uint8 bHasNextComboCommand:1 = false;
 
@@ -112,5 +101,9 @@ protected:
 	void ComboAction();
 	void CheckInput();
 	FTimerHandle AttackTimerHandle;
-	
+
+// Inventory
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Inventory)
+	TObjectPtr<class ARWPlayerInventory> Inventory;
 };

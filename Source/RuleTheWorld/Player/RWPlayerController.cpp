@@ -5,6 +5,7 @@
 #include "EnhancedInputComponent.h"
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
+#include "RWPlayerInventory.h"
 
 #include "Character/RWCharacterPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -63,6 +64,14 @@ ARWPlayerController::ARWPlayerController()
 		SneakingAction = InputActionSneakingRef.Object;
 	}
 	
+	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionPickUpRef(TEXT("/Script/EnhancedInput.InputAction'/Game/RuleTheWorld/Input/Action/IA_PickUp.IA_PickUp'"));
+	if(nullptr != InputActionPickUpRef.Object)
+	{
+		PickUpAction = InputActionPickUpRef.Object;
+	}
+
+	// Inventory
+	Inventory = CreateDefaultSubobject<ARWPlayerInventory>(TEXT("Inventory"));
 }
 
 
@@ -102,7 +111,7 @@ void ARWPlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Triggered, this, &ARWPlayerController::Attack);
 	EnhancedInputComponent->BindAction(SneakingAction, ETriggerEvent::Triggered, this, &ARWPlayerController::Sneaking);
 	EnhancedInputComponent->BindAction(SneakingAction, ETriggerEvent::Completed, this, &ARWPlayerController::StopSneaking);
-	
+	EnhancedInputComponent->BindAction(PickUpAction, ETriggerEvent::Triggered, this, &ARWPlayerController::PickUp);
 }
 
 void ARWPlayerController::Move(const FInputActionValue& Value)
@@ -116,13 +125,12 @@ void ARWPlayerController::Move(const FInputActionValue& Value)
 	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
+	// Using Movement Component
 	if(MovementVector.X && MovementVector.Y) // 대각 이동 시 속도 조절
 	{
 		MovementVector.X *= 0.75;
 		MovementVector.Y *= 0.75;
 	}
-
-	// Using Movement Component
 	
 	if(bIsSneaking)
 	{
@@ -134,7 +142,6 @@ void ARWPlayerController::Move(const FInputActionValue& Value)
 		MovementVector.X *= 0.5;
 		MovementVector.Y *= 0.5;
 	}
-	
 	
 	PlayerPawn->AddMovementInput(ForwardDirection, MovementVector.X);
 	PlayerPawn->AddMovementInput(RightDirection, MovementVector.Y);
@@ -197,6 +204,15 @@ void ARWPlayerController::StopSneaking(const FInputActionValue& Value)
 	bIsSneaking = false;
 }
 
+void ARWPlayerController::PickUp(const FInputActionValue& Value)
+{
+	if(PlayerPawn->bIsItemInBound)
+	{
+		UE_LOG(LogTemp, Log, TEXT("PlayerController : Item Pick Up"));
+		Inventory->GetItem(PlayerPawn->CollisionedItem);
+	}
+}
+
 void ARWPlayerController::ProcessComboCommand()
 {
 	if(CurrentCombo == 0)
@@ -252,3 +268,4 @@ void ARWPlayerController::CheckInput()
 		ComboAction();
 	}
 }
+
