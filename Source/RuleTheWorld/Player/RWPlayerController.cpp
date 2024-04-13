@@ -87,13 +87,20 @@ void ARWPlayerController::BeginPlay()
 	{
 		Subsystem->AddMappingContext(DefaultMappingContext, 0);
 	}
-
+	
 	// Player
-	PlayerPawn = CastChecked<ARWCharacterPlayer>(GetPawn());
+	PlayerPawn = Cast<ARWCharacterPlayer>(GetPawn());
+	UE_LOG(LogTemp, Log, TEXT("tlqkf "));
+	if(!GetPawn())
+	{
+		FString a = GetPawn()->GetClass()->GetName();
+		UE_LOG(LogTemp, Log, TEXT("tlqkf : %s"), *a);
+	}
 	AnimInstance = PlayerPawn->GetMesh()->GetAnimInstance();
 	ComboAttackMontages = {ComboAttackMontage1, ComboAttackMontage2, ComboAttackMontage3, ComboAttackMontage4};
 	ComboKickMontages = {ComboKickMontage1, ComboKickMontage2, ComboKickMontage3, ComboKickMontage4};
 }
+
 
 void ARWPlayerController::SetupInputComponent()
 {
@@ -113,6 +120,11 @@ void ARWPlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(SneakingAction, ETriggerEvent::Triggered, this, &ARWPlayerController::Sneaking);
 	EnhancedInputComponent->BindAction(SneakingAction, ETriggerEvent::Completed, this, &ARWPlayerController::StopSneaking);
 	EnhancedInputComponent->BindAction(PickUpAction, ETriggerEvent::Triggered, this, &ARWPlayerController::PickUp);
+}
+
+void ARWPlayerController::OnPossess()
+{
+	
 }
 
 void ARWPlayerController::Move(const FInputActionValue& Value)

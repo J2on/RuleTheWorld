@@ -16,5 +16,19 @@ class RULETHEWORLD_API ARWGameMode : public AGameModeBase
 
 public:
 	ARWGameMode();
+
+	virtual void Tick(float DeltaSeconds) override;
 	
+// Day and Night
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Day, Meta = (AllowPrivateAccess = "true"))
+	float CurrentTime;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Day, Meta = (AllowPrivateAccess = "true"))
+	float DayProgressPercent;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Day, Meta = (AllowPrivateAccess = "true"))
+	int32 DayScore;
+
+	void UpdateDate(float DeltaSeconds);
 };

@@ -22,6 +22,8 @@ public:
 	
 	virtual void SetupInputComponent() override;
 
+	virtual void OnPossess();
+
 // Character
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = "true"))
