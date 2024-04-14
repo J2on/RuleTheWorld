@@ -90,12 +90,6 @@ void ARWPlayerController::BeginPlay()
 	
 	// Player
 	PlayerPawn = Cast<ARWCharacterPlayer>(GetPawn());
-	UE_LOG(LogTemp, Log, TEXT("tlqkf "));
-	if(!GetPawn())
-	{
-		FString a = GetPawn()->GetClass()->GetName();
-		UE_LOG(LogTemp, Log, TEXT("tlqkf : %s"), *a);
-	}
 	AnimInstance = PlayerPawn->GetMesh()->GetAnimInstance();
 	ComboAttackMontages = {ComboAttackMontage1, ComboAttackMontage2, ComboAttackMontage3, ComboAttackMontage4};
 	ComboKickMontages = {ComboKickMontage1, ComboKickMontage2, ComboKickMontage3, ComboKickMontage4};
