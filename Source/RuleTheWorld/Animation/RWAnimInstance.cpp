@@ -21,7 +21,7 @@ void URWAnimInstance::NativeInitializeAnimation()
 	{
 		Movement = Owner->GetCharacterMovement();
 	}
-
+	
 	RandomStream = FRandomStream();
 }
 
@@ -37,5 +37,13 @@ void URWAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		bIsIdle = GroundSpeed < MovingThreshold;
 		bIsFalling = Movement->IsFalling();
 		bIsJumping = bIsFalling & (Velocity.Z > JumpingThreshold); // Falling이면서 최소 Threshold 이상이면 점프 중
+		
+		// Focusing시의 좌우 이동방향 판별.
+		FVector CrossProductResult = FVector::CrossProduct(Velocity, GetOwningActor()->GetActorForwardVector());
+		CrossProductZ = CrossProductResult.Z;
+		// 앞뒤 이동 판별
+		DotProductValue = FVector::DotProduct(Velocity, GetOwningActor()->GetActorForwardVector());
+		UE_LOG(LogTemp, Log, TEXT("DotProduct : %f"), DotProductValue);
 	}
+
 }

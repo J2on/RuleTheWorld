@@ -9,6 +9,8 @@
 
 #include "Character/RWCharacterPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Object/RWInteractableActor.h"
 
 constexpr int32 MaxCombo = 3;
 
@@ -70,6 +72,12 @@ ARWPlayerController::ARWPlayerController()
 		PickUpAction = InputActionPickUpRef.Object;
 	}
 
+	static ConstructorHelpers::FObjectFinder<UInputAction> InputActionFocusingRef(TEXT("/Script/EnhancedInput.InputAction'/Game/RuleTheWorld/Input/Action/IA_Focusing.IA_Focusing'"));
+	if(nullptr != InputActionFocusingRef.Object)
+	{
+		FocusingAction = InputActionFocusingRef.Object;
+	}
+	
 	// Inventory
 	Inventory = CreateDefaultSubobject<ARWPlayerInventory>(TEXT("Inventory"));
 }
@@ -114,6 +122,8 @@ void ARWPlayerController::SetupInputComponent()
 	EnhancedInputComponent->BindAction(SneakingAction, ETriggerEvent::Triggered, this, &ARWPlayerController::Sneaking);
 	EnhancedInputComponent->BindAction(SneakingAction, ETriggerEvent::Completed, this, &ARWPlayerController::StopSneaking);
 	EnhancedInputComponent->BindAction(PickUpAction, ETriggerEvent::Triggered, this, &ARWPlayerController::PickUp);
+	EnhancedInputComponent->BindAction(FocusingAction, ETriggerEvent::Triggered, this, &ARWPlayerController::Focusing);
+	EnhancedInputComponent->BindAction(FocusingAction, ETriggerEvent::Completed, this, &ARWPlayerController::StopFocusing);
 }
 
 void ARWPlayerController::OnPossess()
@@ -152,11 +162,25 @@ void ARWPlayerController::Move(const FInputActionValue& Value)
 	
 	PlayerPawn->AddMovementInput(ForwardDirection, MovementVector.X);
 	PlayerPawn->AddMovementInput(RightDirection, MovementVector.Y);
+
+	// Focusing 기능 구현
+	if(bIsFocusing && FocusingTargetActor != nullptr)
+	{
+		FVector RotationalVec = FocusingTargetActor->GetActorLocation() - PlayerPawn->GetActorLocation();
+		RotationalVec.Z = 0.f;
+		RotationalVec.Normalize(); // 방향 벡터를 정규화하여 길이를 1로 만듦
+
+		// 방향 벡터를 회전 값으로 변환
+		FRotator NewRotation = FRotationMatrix::MakeFromX(RotationalVec).Rotator();
+
+		PlayerPawn->SetActorRotation(NewRotation);
+	}
+	
 }
 
 void ARWPlayerController::Look(const FInputActionValue& Value)
 {
-	if(bIsEnableLook) 
+	if(bIsEnableLook)
 	{
 		FVector2D LookAxisVector = Value.Get<FVector2D>();
 	
@@ -218,6 +242,34 @@ void ARWPlayerController::PickUp(const FInputActionValue& Value)
 		UE_LOG(LogTemp, Log, TEXT("PlayerController : Item Pick Up"));
 		Inventory->GetItem(PlayerPawn->CollisionedItem);
 	}
+}
+
+void ARWPlayerController::Focusing(const FInputActionValue& Value)
+{
+	
+	// Focusing할 Actor를 설정
+	if(PlayerPawn->CollisionedPawn)
+	{
+		FocusingTargetActor = PlayerPawn->CollisionedPawn;
+		bIsFocusing = true;
+	}
+	else if(PlayerPawn->CollisionedItem)
+	{
+		FocusingTargetActor = PlayerPawn->CollisionedItem;
+		bIsFocusing = true;
+		UE_LOG(LogTemp, Log, TEXT("PlayerController : Item Pick Up"));
+	}
+	else
+	{
+		bIsFocusing = false;
+	}
+}
+
+void ARWPlayerController::StopFocusing(const FInputActionValue& Value)
+{
+	bIsFocusing = false;
+	// Focusing 되었던 Actor를 해제
+	FocusingTargetActor = nullptr;
 }
 
 void ARWPlayerController::ProcessComboCommand()

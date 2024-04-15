@@ -25,6 +25,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character)
 	TObjectPtr<class ACharacter> Owner;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character)
+	TObjectPtr<class APlayerController> OwnerController;
 	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Character)
 	TObjectPtr<class UCharacterMovementComponent> Movement;
@@ -55,4 +58,13 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character)
 	float RandomKey;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character)
+	uint8 bPlayerIsFocusing:1;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character)
+	float CrossProductZ;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Character)
+	float DotProductValue;
 };

@@ -57,6 +57,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category =  Input, Meta = (AllowPrivateAccess = "True"))
 	TObjectPtr<class UInputAction> PickUpAction;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category =  Input, Meta = (AllowPrivateAccess = "True"))
+	TObjectPtr<class UInputAction> FocusingAction;
 	
 	void Move(const FInputActionValue& Value);
 	void Look(const FInputActionValue& Value);
@@ -70,6 +73,8 @@ protected:
 	void Sneaking(const FInputActionValue& Value);
 	void StopSneaking(const FInputActionValue& Value);
 	void PickUp(const FInputActionValue& Value);
+	void Focusing(const FInputActionValue& Value);
+	void StopFocusing(const FInputActionValue& Value);
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "True"))
 	uint8 bIsEnableLook:1;
@@ -80,7 +85,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "True"))
 	uint8 bIsSneaking:1;
 
+
+	AActor* FocusingTargetActor = nullptr;
+	
 	FTimerHandle JumpTimerHandle;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, Meta = (AllowPrivateAccess = "True"))
+	uint8 bIsFocusing:1;
 	
 // Combo Attack Section
 protected:
