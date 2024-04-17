@@ -8,6 +8,7 @@
 
 constexpr float StartTime = 120.f; // Game Start 06:00 
 constexpr float OneDay = 480.f; // 8min(Real Time) = 1Day / 1min = 3Hours / 20sec = 1Hour
+constexpr int OneHour = 20;
 
 ARWGameMode::ARWGameMode()
 {
@@ -67,4 +68,6 @@ void ARWGameMode::UpdateDate(float DeltaSeconds)
 	}
 	// 하루가 얼마나 지났는지 퍼센트로 표시
 	DayProgressPercent = 100 * (CurrentTime / OneDay);
+	CurrentHour = CurrentTime / OneHour;
+	CurrentMinute = static_cast<int32>(CurrentTime) % OneHour;
 }

@@ -29,6 +29,11 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Day, Meta = (AllowPrivateAccess = "true"))
 	int32 DayScore;
-
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Day, Meta = (AllowPrivateAccess = "true"))
+	int32 CurrentHour;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Day, Meta = (AllowPrivateAccess = "true"))
+	int32 CurrentMinute;
+	
 	void UpdateDate(float DeltaSeconds);
 };

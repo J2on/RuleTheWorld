@@ -24,6 +24,8 @@ public:
 
 	virtual void OnPossess();
 
+	virtual void PostNetInit() override;
+
 // Character
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = "true"))

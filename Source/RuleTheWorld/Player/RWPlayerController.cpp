@@ -98,7 +98,32 @@ void ARWPlayerController::BeginPlay()
 	
 	// Player
 	PlayerPawn = Cast<ARWCharacterPlayer>(GetPawn());
-	AnimInstance = PlayerPawn->GetMesh()->GetAnimInstance();
+	ENetMode NM = GetNetMode();
+	FText NetModeName;
+	if(NM == NM_Client)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Player Controller : It is NM_Client"));
+	}
+	else if(NM == NM_ListenServer)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Player Controller : It is NM_ListnServer"));
+	}
+	else if(NM == NM_Standalone)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Player Controller : It is Standalone"));
+	}
+	
+	if(PlayerPawn)
+	{
+		
+		UE_LOG(LogTemp, Log, TEXT("Player Controller : It is GetAnimInstance"));
+		
+		AnimInstance = PlayerPawn->GetMesh()->GetAnimInstance();	
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("Player Comtroller : It Can't GetAniminstance"))
+	}
 	ComboAttackMontages = {ComboAttackMontage1, ComboAttackMontage2, ComboAttackMontage3, ComboAttackMontage4};
 	ComboKickMontages = {ComboKickMontage1, ComboKickMontage2, ComboKickMontage3, ComboKickMontage4};
 }
@@ -129,6 +154,11 @@ void ARWPlayerController::SetupInputComponent()
 void ARWPlayerController::OnPossess()
 {
 	
+}
+
+void ARWPlayerController::PostNetInit()
+{
+	Super::PostNetInit();
 }
 
 void ARWPlayerController::Move(const FInputActionValue& Value)
