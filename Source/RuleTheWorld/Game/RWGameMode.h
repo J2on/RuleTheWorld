@@ -19,7 +19,7 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 	
-// Day and Night
+	// Day and Night
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Day, Meta = (AllowPrivateAccess = "true"))
 	float CurrentTime;
@@ -36,4 +36,12 @@ protected:
 	int32 CurrentMinute;
 	
 	void UpdateDate(float DeltaSeconds);
+
+
+public:
+
+	float GetCurrentTime() const;
+	float GetDayProgressPercent() const;
+	int32 GetDayScore() const;
 };
+

@@ -12,7 +12,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Object/RWInteractableActor.h"
 
-constexpr int32 MaxCombo = 3;
+constexpr int32 MAX_COMBO = 3;
 
 ARWPlayerController::ARWPlayerController()
 {
@@ -336,14 +336,14 @@ void ARWPlayerController::ComboAction()
 	
 	// Combo Status
 	float RateTime; 
-	if(CurrentCombo == MaxCombo)
+	if(CurrentCombo == MAX_COMBO)
 	{
 		CurrentCombo = 1;
 		RateTime = 1.5f;
 	}
 	else
 	{
-		CurrentCombo = FMath::Clamp(CurrentCombo + 1, 1, MaxCombo);
+		CurrentCombo = FMath::Clamp(CurrentCombo + 1, 1, MAX_COMBO);
 		RateTime = 1.0f;
 	}
 	GetWorld()->GetTimerManager().SetTimer(AttackTimerHandle, this, &ARWPlayerController::CheckInput, RateTime, false);

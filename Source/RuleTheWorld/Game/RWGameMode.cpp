@@ -6,9 +6,9 @@
 #include "GameFramework/PlayerState.h"
 #include "Player/RWPlayerController.h"
 
-constexpr float StartTime = 120.f; // Game Start 06:00 
-constexpr float OneDay = 480.f; // 8min(Real Time) = 1Day / 1min = 3Hours / 20sec = 1Hour
-constexpr int OneHour = 20;
+constexpr float START_TIME = 120.f; // Game Start 06:00 
+constexpr float ONE_DAY = 480.f; // 8min(Real Time) = 1Day / 1min = 3Hours / 20sec = 1Hour
+constexpr int ONE_HOUR = 20;
 
 ARWGameMode::ARWGameMode()
 {
@@ -44,9 +44,9 @@ ARWGameMode::ARWGameMode()
 	}
 	
 	// Day
-	CurrentTime = StartTime;
+	CurrentTime = START_TIME;
 	DayScore = 1;
-	DayProgressPercent = StartTime / OneDay;
+	DayProgressPercent = START_TIME / ONE_DAY;
 }
 
 void ARWGameMode::Tick(float DeltaSeconds)
@@ -60,14 +60,31 @@ void ARWGameMode::UpdateDate(float DeltaSeconds)
 {
 	CurrentTime += DeltaSeconds;
 	// Day Change
-	if(CurrentTime >= OneDay)
+	if(CurrentTime >= ONE_DAY)
 	{
 		DayScore++;
-		CurrentTime -= OneDay;
+		CurrentTime -= ONE_DAY;
 		UE_LOG(LogTemp, Log, TEXT("Game State - Day : %d CurrentTime : %f ProgressPercent : %f"), DayScore, CurrentTime, DayProgressPercent);
 	}
 	// 하루가 얼마나 지났는지 퍼센트로 표시
-	DayProgressPercent = 100 * (CurrentTime / OneDay);
-	CurrentHour = CurrentTime / OneHour;
-	CurrentMinute = static_cast<int32>(CurrentTime) % OneHour;
+	DayProgressPercent = 100 * (CurrentTime / ONE_DAY);
+	CurrentHour = CurrentTime / ONE_HOUR;
+	CurrentMinute = ((60/ONE_HOUR) * static_cast<int32>(CurrentTime)) % 60;
 }
+
+float ARWGameMode::GetCurrentTime() const
+{
+	return CurrentTime;
+}
+
+float ARWGameMode::GetDayProgressPercent() const
+{
+	return DayProgressPercent;
+}
+
+int32 ARWGameMode::GetDayScore() const
+{
+	return DayScore;
+}
+
+
