@@ -41,7 +41,7 @@ void ARWLevelScript::Tick(float DeltaSeconds)
 	UpdateSunLightRotation();
 }
 
-
+// Client Only
 void ARWLevelScript::AddMainWidget_Implementation()
 {
 	if(WidgetClass)

@@ -35,6 +35,7 @@ void ARWGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 
 	DOREPLIFETIME(ARWGameState, CurrentTime);
 	DOREPLIFETIME(ARWGameState, DayProgressPercent);
+	DOREPLIFETIME(ARWGameState, DayScore);
 }
 
 // 클라이언트에서 서버로 변수를 요청하는 함수를 정의합니다.
@@ -66,7 +67,7 @@ int32 ARWGameState::GetClientDayScore() const
 	return DayScore;
 }
 
-
+// Client Only
 void ARWGameState::UpdateTime_Implementation(float DeltaSeconds)
 {
 	CurrentTime += DeltaSeconds;

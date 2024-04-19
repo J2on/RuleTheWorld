@@ -36,7 +36,7 @@ protected:
 	// Time Variable
 	UFUNCTION(Client, Reliable)
 	void UpdateTime(float DeltaSeconds);
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Day, Meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Time")
 	int32 DayScore;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated, Category = "Time")
