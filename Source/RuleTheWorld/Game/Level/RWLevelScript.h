@@ -37,11 +37,14 @@ protected:
 	
 // Sky
 protected:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Sky")
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Sky", Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UDirectionalLightComponent> SunLight;
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Sky", Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UDirectionalLightComponent> MoonLight;
+	
 	// Client Only
 	UFUNCTION(Client, Reliable)
 	void UpdateSunLightRotation();
-
+	
 };

@@ -14,6 +14,12 @@ constexpr int ONE_HOUR_CLIENT = 20;
 ARWGameState::ARWGameState()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	// Initialize
+	DayScore = 0;
+	CurrentTime = 0.f;
+	DayProgressPercent = 0.f;
+	CurrentHour = 0;
+	CurrentMinute = 0;
 }
 
 void ARWGameState::BeginPlay()
