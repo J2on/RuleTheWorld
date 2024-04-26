@@ -45,5 +45,4 @@ void URWAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		DotProductValue = FVector::DotProduct(Velocity, GetOwningActor()->GetActorForwardVector());
 		UE_LOG(LogTemp, Log, TEXT("DotProduct : %f"), DotProductValue);
 	}
-
 }
