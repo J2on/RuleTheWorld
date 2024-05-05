@@ -1,20 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Animal/RWAnimalWolf.h"
+#include "Animal/RWAnimalFox.h"
 
-#include "AI/RWAIWolfController.h"
-
-ARWAnimalWolf::ARWAnimalWolf()
+ARWAnimalFox::ARWAnimalFox()
 {
-	//PrimaryActorTick.bCanEverTick = true;
-	
-	
-	// Assign Mesh Reference 
 	static ConstructorHelpers::FObjectFinder<USkeletalMesh> AnimalMeshRef(TEXT("/Script/Engine.SkeletalMesh'/Game/Asset/AnimalVarietyPack/Wolf/Meshes/SK_Wolf.SK_Wolf'"));
 	if(AnimalMeshRef.Object)
 	{
 		GetMesh()->SetSkeletalMesh(AnimalMeshRef.Object);
 	}
-
+	
 }

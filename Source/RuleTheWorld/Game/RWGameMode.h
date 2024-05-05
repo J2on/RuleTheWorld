@@ -17,9 +17,10 @@ class RULETHEWORLD_API ARWGameMode : public AGameModeBase
 public:
 	ARWGameMode();
 
+	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 	
-	// Day and Night
+// Game Time
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Day, Meta = (AllowPrivateAccess = "true"))
 	float CurrentTime;
@@ -37,11 +38,24 @@ protected:
 	
 	void UpdateDate(float DeltaSeconds);
 
-
 public:
-
 	float GetCurrentTime() const;
 	float GetDayProgressPercent() const;
 	int32 GetDayScore() const;
+
+// Spawn Animal And Plant
+private:
+	UPROPERTY(EditAnywhere, Category = Animal)
+	TSubclassOf<class ARWAnimalWolf> WolfClass;
+	
+	void SpawnWolf();
+	void UpdateMaxWolfNum();
+	
+	int MaxWolfNum;
+	int CurrentWolfNum;
+
+public:
+	// 사냥 시 현재 수를 줄여줌
+	void DecreaseCurrentWolfNum();
 };
 

@@ -30,6 +30,20 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Pawn, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class ARWCharacterPlayer> PlayerPawn;
+
+// UI
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TSubclassOf<class UUserWidget> HUDWidgetClass; // BP에서 지정
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
+	TObjectPtr<class UUserWidget> HUDWidgetInstance;
+	UFUNCTION(Client, Reliable)
+	void HUDInstancing();
+	UFUNCTION(Client, Reliable)
+	void HUDAddToViewport();
+	
+
 	
 // Input System
 protected:
@@ -132,6 +146,7 @@ protected:
 	void ProcessComboCommand();
 	void ComboAction();
 	void CheckInput();
+	void SetComboAttackMontages();
 	FTimerHandle AttackTimerHandle;
 
 // Inventory

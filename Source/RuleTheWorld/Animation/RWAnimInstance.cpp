@@ -43,6 +43,5 @@ void URWAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 		CrossProductZ = CrossProductResult.Z;
 		// 앞뒤 이동 판별
 		DotProductValue = FVector::DotProduct(Velocity, GetOwningActor()->GetActorForwardVector());
-		UE_LOG(LogTemp, Log, TEXT("DotProduct : %f"), DotProductValue);
 	}
 }

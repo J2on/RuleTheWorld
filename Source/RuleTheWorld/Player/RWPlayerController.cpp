@@ -6,8 +6,10 @@
 #include "InputMappingContext.h"
 #include "EnhancedInputSubsystems.h"
 #include "RWPlayerInventory.h"
+#include "Blueprint/UserWidget.h"
 
 #include "Character/RWCharacterPlayer.h"
+#include "Components/SceneCaptureComponent2D.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Object/RWInteractableActor.h"
@@ -124,8 +126,14 @@ void ARWPlayerController::BeginPlay()
 	{
 		UE_LOG(LogTemp, Log, TEXT("Player Comtroller : It Can't GetAniminstance"))
 	}
-	ComboAttackMontages = {ComboAttackMontage1, ComboAttackMontage2, ComboAttackMontage3, ComboAttackMontage4};
-	ComboKickMontages = {ComboKickMontage1, ComboKickMontage2, ComboKickMontage3, ComboKickMontage4};
+
+	// UI
+	HUDInstancing();
+	HUDAddToViewport();
+	
+
+	// ComboAttack
+	SetComboAttackMontages();
 }
 
 
@@ -159,6 +167,22 @@ void ARWPlayerController::OnPossess()
 void ARWPlayerController::PostNetInit()
 {
 	Super::PostNetInit();
+}
+
+void ARWPlayerController::HUDInstancing_Implementation()
+{
+	if (HUDWidgetClass != nullptr)
+	{
+		HUDWidgetInstance = CreateWidget<UUserWidget>(this, HUDWidgetClass);
+	}
+}
+
+void ARWPlayerController::HUDAddToViewport_Implementation()
+{
+	if (HUDWidgetInstance != nullptr)
+	{
+		HUDWidgetInstance->AddToViewport();
+	}
 }
 
 void ARWPlayerController::Move(const FInputActionValue& Value)
@@ -364,5 +388,11 @@ void ARWPlayerController::CheckInput()
 		bHasNextComboCommand = false;
 		ComboAction();
 	}
+}
+
+void ARWPlayerController::SetComboAttackMontages()
+{
+	ComboAttackMontages = {ComboAttackMontage1, ComboAttackMontage2, ComboAttackMontage3, ComboAttackMontage4};
+	ComboKickMontages = {ComboKickMontage1, ComboKickMontage2, ComboKickMontage3, ComboKickMontage4};
 }
 

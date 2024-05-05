@@ -37,7 +37,7 @@ void ARWLevelScript::BeginPlay()
 	Super::BeginPlay();
 
 
-	AddMainWidget();
+	//AddMainWidget();
 	GameState = Cast<ARWGameState>(GetWorld()->GetGameState());
 }
 
@@ -64,6 +64,4 @@ void ARWLevelScript::UpdateSunLightRotation_Implementation()
 	float RotatePitch = 90 + GameState->GetClientDayProgressPercent() * DAY_PROGRESS_PERCENT_PER_MIN;
 	FRotator NewSunRotaion = FRotator(RotatePitch, 0, 0);
 	SunLight->SetWorldRotation(NewSunRotaion);
-	UE_LOG(LogTemp, Log, TEXT("Sun Location : %f"), GameState->GetClientDayProgressPercent());
-
 }

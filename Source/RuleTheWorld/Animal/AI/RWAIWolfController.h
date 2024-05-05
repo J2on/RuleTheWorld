@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AIController.h"
+#include "RWAnimalAIController.h"
 #include "RWAIWolfController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RULETHEWORLD_API ARWAIWolfController : public AAIController
+class RULETHEWORLD_API ARWAIWolfController : public ARWAnimalAIController
 {
 	GENERATED_BODY()
 
@@ -24,19 +24,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BT)
 	TObjectPtr<UBehaviorTree> BehaviorTreeAsset;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BT)
-	TObjectPtr<UBlackboardData> BlackboardAsset;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BT)
-	TObjectPtr<class UAIPerceptionComponent> AIPerceptionComponent;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BT)
-	TObjectPtr<class UAISenseConfig_Sight> SightConfig;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BT)
-	TObjectPtr<class UBlackboardComponent> BlackboardComponent;	
-
-	UFUNCTION()
-	void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus);
 	
 };

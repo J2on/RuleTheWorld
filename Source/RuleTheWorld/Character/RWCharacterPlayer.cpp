@@ -8,6 +8,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Player/RWPlayerState.h"
 #include "AbilitySystemComponent.h"
+#include "Components/SceneCaptureComponent2D.h"
+#include "Engine/CanvasRenderTarget2D.h"
 
 
 ARWCharacterPlayer::ARWCharacterPlayer()
@@ -23,6 +25,19 @@ ARWCharacterPlayer::ARWCharacterPlayer()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
+	// Minimap SpringArm
+	MiniMapSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("MiniMapSpringArm"));
+	MiniMapSpringArm->SetupAttachment(RootComponent);
+	MiniMapSpringArm->TargetArmLength = 400.0f;
+	MiniMapSpringArm->bUsePawnControlRotation = false;
+	MiniMapSpringArm->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f));
+
+	// Minimap Camera
+	MiniMapSceneCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("MiniMapSceneCaptrue"));
+	MiniMapSceneCapture->SetupAttachment(MiniMapSpringArm, USpringArmComponent::SocketName);
+
+	
+	
 	// GAS
 	// ASC is bring from PlayerState at PossessedBy()
 	ASC = nullptr;
@@ -36,6 +51,11 @@ UAbilitySystemComponent* ARWCharacterPlayer::GetAbilitySystemComponent() const
 void ARWCharacterPlayer::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// 미니맵에 사용 할 Canvas Render Target을 설정
+	// 각 Client마다 생성된 이후에 지정해주어야 하기 때문에, BeginPlay에서 지정
+	UCanvasRenderTarget2D* MinimapCanvasRenderTarget = UCanvasRenderTarget2D::CreateCanvasRenderTarget2D(GetWorld(), UCanvasRenderTarget2D::StaticClass(), 1024, 1024);
+	MiniMapSceneCapture->TextureTarget = MinimapCanvasRenderTarget;
 }
 
 

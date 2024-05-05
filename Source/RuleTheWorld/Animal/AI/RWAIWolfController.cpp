@@ -2,12 +2,8 @@
 
 
 #include "Animal/AI/RWAIWolfController.h"
-#include "BehaviorTree/BlackboardData.h"
+
 #include "BehaviorTree/BehaviorTree.h"
-#include "BehaviorTree/BlackboardComponent.h"
-#include "Character/RWCharacterBase.h"
-#include "Perception/AIPerceptionComponent.h"
-#include "Perception/AISenseConfig_Sight.h"
 
 ARWAIWolfController::ARWAIWolfController()
 {
@@ -18,26 +14,7 @@ ARWAIWolfController::ARWAIWolfController()
 	{
 		BehaviorTreeAsset = BehaviorTreeRef.Object;
 	}
-	// Black Board
-	static ConstructorHelpers::FObjectFinder<UBlackboardData> BlackBoardRef(TEXT("/Script/AIModule.BlackboardData'/Game/RuleTheWorld/Animal/AI/BB/BB_Wolf.BB_Wolf'"));
-	if(BlackBoardRef.Object)
-	{
-		BlackboardAsset = BlackBoardRef.Object;
-	}
-
-	// AI Perception
-	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AI Perception"));
-	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
-	SightConfig->SightRadius = 3000; // 시야 반경 설정
-	SightConfig->DetectionByAffiliation.bDetectEnemies = true; // 적 감지 설정
-	SightConfig->DetectionByAffiliation.bDetectNeutrals = true;
-	SightConfig->DetectionByAffiliation.bDetectFriendlies = true;
-
-	// 시각 설정을 AIPerception 컴포넌트에 추가
-	AIPerceptionComponent->ConfigureSense(*SightConfig);
-	AIPerceptionComponent->SetDominantSense(*SightConfig->GetSenseImplementation());
-	AIPerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &ARWAIWolfController::OnTargetPerceptionUpdated);
-	AIPerceptionComponent->ConfigureSense(*SightConfig);
+	
 }
 
 void ARWAIWolfController::OnPossess(APawn* InPawn)
@@ -48,7 +25,7 @@ void ARWAIWolfController::OnPossess(APawn* InPawn)
 	{
 		if(!RunBehaviorTree(BehaviorTreeAsset))
 		{
-			UE_LOG(LogTemp, Error, TEXT("Wolf : BehaviorTree is not Running"));
+			UE_LOG(LogTemp, Error, TEXT("Wolf AI Controller : BehaviorTree is not Running"));
 		}
 		
 		BlackboardComponent = GetBlackboardComponent();
@@ -59,15 +36,3 @@ void ARWAIWolfController::OnPossess(APawn* InPawn)
 	
 }
 
-void ARWAIWolfController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
-{
-	ARWCharacterBase* Player = Cast<ARWCharacterBase>(Actor);
-	if(Player)
-	{
-		FName BoolKeyName = FName("HasLineOfSight");
-		FName EnemyKeyName = FName("EnemyActor");
-		BlackboardComponent->SetValueAsBool(BoolKeyName, true);
-		BlackboardComponent->SetValueAsObject(EnemyKeyName, Player);
-		
-	}
-}

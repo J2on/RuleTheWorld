@@ -30,7 +30,9 @@ ARWAnimalBase::ARWAnimalBase()
 	//GetMesh()->SetAnimationMode(EAnimationMode::AnimationBlueprint);
 	GetMesh()->SetCollisionProfileName(TEXT("CharacterMesh"));
 
-	
+	// AI Controller Possess
+	// AIControllerClass <- BP에서 설정
+	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
 }
 
 // Called when the game starts or when spawned

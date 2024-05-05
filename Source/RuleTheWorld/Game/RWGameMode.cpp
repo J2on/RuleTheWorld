@@ -2,6 +2,8 @@
 
 #include "Game/RWGameMode.h"
 
+#include "RWGameState.h"
+#include "Animal/RWAnimalWolf.h"
 #include "GameFramework/GameState.h"
 #include "GameFramework/PlayerState.h"
 #include "Player/RWPlayerController.h"
@@ -14,6 +16,7 @@ ARWGameMode::ARWGameMode()
 {
 	//DefaultPawnClass <- 해야 함
 	PrimaryActorTick.bCanEverTick = true;
+
 	//static ConstructorHelpers::FClassFinder<APawn> DefaultPawnClassRef(TEXT("/Script/RuleTheWorld.RWCharacterPlayer"));
 	static  ConstructorHelpers::FClassFinder<APawn> DefaultPawnClassRef(TEXT("/Game/RuleTheWorld/Character/BP_RWCharacterPlayer.BP_RWCharacterPlayer_C"));
 	if(DefaultPawnClassRef.Class)
@@ -42,11 +45,29 @@ ARWGameMode::ARWGameMode()
 	{
 		PlayerStateClass = PlayerStateClassRef.Class;
 	}
+
+	// Set Wolf Class
+	static ConstructorHelpers::FClassFinder<ARWAnimalWolf> WolfClassRef(TEXT("/Game/RuleTheWorld/Animal/BP_Wolf.BP_Wolf_C"));
+	if(WolfClassRef.Class)
+	{
+		WolfClass = WolfClassRef.Class;
+	}
 	
 	// Day
 	CurrentTime = START_TIME;
 	DayScore = 1;
 	DayProgressPercent = START_TIME / ONE_DAY;
+
+	// Animal
+	MaxWolfNum = 5;
+	CurrentWolfNum = 0;
+}
+
+void ARWGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	SpawnWolf();
 }
 
 void ARWGameMode::Tick(float DeltaSeconds)
@@ -64,6 +85,8 @@ void ARWGameMode::UpdateDate(float DeltaSeconds)
 	{
 		DayScore++;
 		CurrentTime -= ONE_DAY;
+		UpdateMaxWolfNum();
+		SpawnWolf();
 		UE_LOG(LogTemp, Log, TEXT("Game State - Day : %d CurrentTime : %f ProgressPercent : %f"), DayScore, CurrentTime, DayProgressPercent);
 	}
 	// 하루가 얼마나 지났는지 퍼센트로 표시
@@ -85,6 +108,33 @@ float ARWGameMode::GetDayProgressPercent() const
 int32 ARWGameMode::GetDayScore() const
 {
 	return DayScore;
+}
+
+
+void ARWGameMode::SpawnWolf()
+{
+	for(int i = 0; i < MaxWolfNum - CurrentWolfNum; i++)
+	{
+		FVector SpawnLocation = FVector(100.0f, 100.0f, 100.0f);
+		FRotator SpawnRotation = FRotator(0.0f, 0.0f, 0.0f);
+		GetWorld()->SpawnActor<ACharacter>(WolfClass, SpawnLocation, SpawnRotation);
+		CurrentWolfNum++;
+		UE_LOG(LogTemp, Log, TEXT("Spawn Wolf"));
+	}
+}
+
+void ARWGameMode::UpdateMaxWolfNum()
+{
+	MaxWolfNum += 2;
+}
+
+
+void ARWGameMode::DecreaseCurrentWolfNum()
+{
+	if(CurrentWolfNum > 0)
+	{
+		CurrentWolfNum--;
+	}
 }
 
 

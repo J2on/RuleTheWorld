@@ -20,22 +20,25 @@ public:
 	virtual void BeginPlay() override;
 	virtual void Tick(float DeltaSeconds) override;
 
-		
+	TObjectPtr<class ARWGameMode> GameMode;
 // Network
 protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
+	/*
 	UFUNCTION(Server, Reliable)
 	void ServerRequestTimeVariable();
 	
-	UPROPERTY(BlueprintReadOnly, Category = "Network")
-	FTimerHandle TimerHandle_RequestMyVariable;
 
+	
 	void RequestTimeVariableFromServer();
+	*/
+
+	UPROPERTY(BlueprintReadOnly, Category = "Time")
+	FTimerHandle TimerHandle_RequestGameTime;
 
 	// Time Variable
-	UFUNCTION(Client, Reliable)
 	void UpdateTime(float DeltaSeconds);
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated, Category = "Time")
 	int32 DayScore;
 
