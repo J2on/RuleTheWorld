@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interface/RWAnimationAttackInterface.h"
 #include "RWCharacterBase.generated.h"
 
 UCLASS()
-class RULETHEWORLD_API ARWCharacterBase : public ACharacter
+class RULETHEWORLD_API ARWCharacterBase : public ACharacter, public IRWAnimationAttackInterface
 {
 	GENERATED_BODY()
 
@@ -37,4 +38,17 @@ public:
 	TObjectPtr<class APawn> CollisionedPawn;
 	UPROPERTY(BlueprintReadOnly, EditAnywhere, Category = "BoundingBox")
 	uint8 bIsAnimalInBound:1;
+
+// Attack Hit Check
+protected:
+	virtual void AttackHitCheck() override;
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+// Dead Section
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stat, Meta = (AllowPrivateAccess = "true"))
+	TObjectPtr<class UAnimMontage> DeadMontage;
+
+	virtual void SetDead();
+	void PlayDeadAnimation();
+
+	float DeadEventDelayTime = 5.0f;
 };

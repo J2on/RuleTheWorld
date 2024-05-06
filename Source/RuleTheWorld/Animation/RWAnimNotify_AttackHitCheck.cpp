@@ -2,32 +2,21 @@
 
 
 #include "Animation/RWAnimNotify_AttackHitCheck.h"
-#include "AbilitySystemBlueprintLibrary.h"
-
-URWAnimNotify_AttackHitCheck::URWAnimNotify_AttackHitCheck()
-{
-}
-
-FString URWAnimNotify_AttackHitCheck::GetNotifyName_Implementation() const
-{
-	return TEXT("AnimNotify : AttackHitCheck");
-}
+#include "Interface/RWAnimationAttackInterface.h"
 
 void URWAnimNotify_AttackHitCheck::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation,
 	const FAnimNotifyEventReference& EventReference)
 {
 	Super::Notify(MeshComp, Animation, EventReference);
 
-	if(MeshComp) // Character일 때,
+	if(MeshComp)
 	{
-		AActor* OwnerActor = MeshComp->GetOwner(); // Load Actor
-		if(OwnerActor) 
+		// Owner가 Interface에 구현이 되지 않았다면 NULL이 아니게 됨.
+		// 그래서 구현되었는지 Check를 Null인지로 판별 함. 
+		IRWAnimationAttackInterface* AttackPawn = Cast<IRWAnimationAttackInterface>(MeshComp->GetOwner());
+		if(AttackPawn)
 		{
-			FGameplayEventData PayLoadData; // Empty 인자로 넣기 위해
-			
-			// ASC를 가진 Actor에 Event를 발동
-			// TriggTriggerGamePlayTag(블루프린트에서 지정)를 가진 Ability를 Actor가 수행하도록 함
-			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(OwnerActor, TriggerGamePlayTag, PayLoadData);
+			AttackPawn->AttackHitCheck();
 		}
 	}
 }
