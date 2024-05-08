@@ -14,6 +14,13 @@
 
 ARWCharacterPlayer::ARWCharacterPlayer()
 {
+	// Anim Instance Assign
+	static ConstructorHelpers::FClassFinder<UAnimInstance> AnimInstanceClassRef(TEXT("/Game/RuleTheWorld/Character/Animation/ABP_RWChracter.ABP_RWChracter_C"));
+	if(AnimInstanceClassRef.Class)
+	{
+		GetMesh()->SetAnimInstanceClass(AnimInstanceClassRef.Class);
+	}
+	
 	// Spring Arm
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -28,13 +35,14 @@ ARWCharacterPlayer::ARWCharacterPlayer()
 	// Minimap SpringArm
 	MiniMapSpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("MiniMapSpringArm"));
 	MiniMapSpringArm->SetupAttachment(RootComponent);
-	MiniMapSpringArm->TargetArmLength = 400.0f;
+	MiniMapSpringArm->TargetArmLength = 10000.0f;
 	MiniMapSpringArm->bUsePawnControlRotation = false;
 	MiniMapSpringArm->SetRelativeRotation(FRotator(-90.0f, 0.0f, 0.0f));
 
 	// Minimap Camera
 	MiniMapSceneCapture = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("MiniMapSceneCaptrue"));
 	MiniMapSceneCapture->SetupAttachment(MiniMapSpringArm, USpringArmComponent::SocketName);
+	MiniMapSceneCapture->ProjectionType = ECameraProjectionMode::Orthographic;
 
 	
 	

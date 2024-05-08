@@ -9,8 +9,6 @@
 // Sets default values
 ARWAnimalBase::ARWAnimalBase()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
 	
 	// Capsule
 	GetCapsuleComponent()->InitCapsuleSize(50.f,50.f);
@@ -42,6 +40,7 @@ void ARWAnimalBase::BeginPlay()
 	
 }
 
+ 
 void ARWAnimalBase::UpdateWalkSpeed(float WalkSpeed)
 {
 	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
