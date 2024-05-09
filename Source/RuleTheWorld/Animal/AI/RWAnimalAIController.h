@@ -33,5 +33,7 @@ protected:
 
 	UFUNCTION()
 	void OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus) ;
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = BT)
+	TObjectPtr<UBehaviorTree> BehaviorTreeAsset;
 };

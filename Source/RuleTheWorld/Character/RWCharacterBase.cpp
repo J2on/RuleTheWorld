@@ -11,6 +11,8 @@
 #include "Animal/RWAnimalBase.h"
 #include "Engine/DamageEvents.h"
 #include "Object/RWInteractableActor.h"
+#include "Stat/RWCharacterStatComponent.h"
+#include "UI/RWMainWidget.h"
 
 // Sets default values
 ARWCharacterBase::ARWCharacterBase()
@@ -66,13 +68,44 @@ ARWCharacterBase::ARWCharacterBase()
 	CollisionedItem = nullptr;
 	bIsItemInBound = false;
 
-	// 
+	// CollisionBox Detection
 	CollisionedPawn = nullptr;
 	bIsAnimalInBound = false;
+
+	// Stat Component
+	StatComponent = CreateDefaultSubobject<URWCharacterStatComponent>(TEXT("Stat"));
+}
+
+void ARWCharacterBase::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	// HP가 0이 될 경우 사망 -> Delegate로 Stat Component와 연결 
+	StatComponent->OnHPZero.AddUObject(this, &ARWCharacterBase::SetDead);
+	// Hungry가 Max가 되면 Staring으로 변경 -> -> Delegate로 Stat Component와 연결
+	StatComponent->OnStarving.AddUObject(this, &ARWCharacterBase::SetStarving);
+	
+}
+
+void ARWCharacterBase::SetUpCharacterWidget(URWMainWidget* MainWidget)
+{
+	//IRWCharacterWidgetInterface::SetUpCharacterWidget(MainWidget);
+	
+	// StatComponent에서 값을 얻어와 설정해줌
+	MainWidget->SetMaxHP(StatComponent->GetMaxHP());
+	MainWidget->SetMaxHunger(StatComponent->GetMaxHunger());
+
+	// StatBar Initialize
+	MainWidget->UpdateHPBar(StatComponent->GetCurrentHP());
+	MainWidget->UpdateHungerBar(StatComponent->GetCurrentHunger());
+
+	// Delegate 등록
+	StatComponent->OnHPChanged.AddUObject(MainWidget, &URWMainWidget::UpdateHPBar);
+	StatComponent->OnHungerChanged.AddUObject(MainWidget, &URWMainWidget::UpdateHungerBar);
 }
 
 void ARWCharacterBase::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                      UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if(OtherActor == this)
 	{
@@ -164,27 +197,36 @@ float ARWCharacterBase::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	// EventInstigator -> 나에게 피해를 입힌 Controller, DamageCauser -> 사용한 무기 또는 빙의한 폰 (데미지를 준) 
 	Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
+	/*
+	// 사망
 	SetDead();
+	*/
+
+	// Damage 받은 것을 StatComponent에서 적용시킴
+	StatComponent->ApplyDamage(DamageAmount);
 	
-	return 0.0f;
+	return DamageAmount;
 }
 
 void ARWCharacterBase::SetDead()
 {
+	PlayDeadAnimation();
 	// 사망 시 이동 제한
 	GetCharacterMovement()->SetMovementMode(MOVE_None);
-	PlayDeadAnimation();
+	
 	// 더 이상 충돌되지 않도록
 	SetActorEnableCollision(false);
 }
 
 void ARWCharacterBase::PlayDeadAnimation()
 {
+	UE_LOG(LogTemp, Log, TEXT("ddd"))
 	UAnimInstance* AnimInstance = GetMesh()->GetAnimInstance();
 	AnimInstance->StopAllMontages(0.0f);
 	AnimInstance->Montage_Play(DeadMontage, 1.0f);
 }
 
-
-
-
+void ARWCharacterBase::SetStarving()
+{
+	// 기아 상태 시 변화 구현 필요
+}

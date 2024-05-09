@@ -3,20 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "RWAnimalAIController.h"
-#include "RWAIWolfController.generated.h"
+#include "Animal/AI/RWAnimalAIController.h"
+#include "RWAIFoxController.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class RULETHEWORLD_API ARWAIWolfController : public ARWAnimalAIController
+class RULETHEWORLD_API ARWAIFoxController : public ARWAnimalAIController
 {
 	GENERATED_BODY()
 
 public:
-	ARWAIWolfController();
+	ARWAIFoxController();
 
 	virtual void OnPossess(APawn* InPawn) override;
-
 };

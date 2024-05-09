@@ -17,9 +17,12 @@ class RULETHEWORLD_API URWMainWidget : public UUserWidget
 public:
 	URWMainWidget(const FObjectInitializer &ObjectInitializer);
 
-	virtual void NativeConstruct() override;
 
-	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+	TObjectPtr<class ARWCharacterPlayer> CharacterPlayer;
+	
+// Minimap
+protected:
+	virtual void NativeConstruct() override;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Minimap")
 	TObjectPtr<class UImage> MinimapImage;
@@ -30,7 +33,32 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Minimap")
 	TObjectPtr<class UMaterialInstanceDynamic> MinimapMaterialInstance;
 
+	void SetMinimap();
 	void SetMinimapMaterial();
+	void BindImageFromMinimapMaterial();
 	
-	uint8 bIsMinimapCompleted;
+	FTimerHandle TimerHandle_SetMinimap;
+	
+	uint8 bIsMinimapCompleted:1;
+
+// Stat Bar (HP, Hunger)
+public:
+	FORCEINLINE void SetMaxHP(float NewMaxHP) { MaxHP = NewMaxHP; }
+	void UpdateHPBar(float NewCurrentHP);
+
+	FORCEINLINE void SetMaxHunger(float NewMaxHunger) { MaxHunger = NewMaxHunger; }
+	void UpdateHungerBar(float NewCurrentHunger);
+	
+	
+protected:
+	UPROPERTY()
+	TObjectPtr<class UProgressBar> HPProgressBar;
+	UPROPERTY()
+	float MaxHP;
+	
+	UPROPERTY()
+	TObjectPtr<class UProgressBar> HungerProgressBar;
+	UPROPERTY()
+	float MaxHunger;
+	
 };

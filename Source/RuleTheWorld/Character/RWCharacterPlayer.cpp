@@ -64,6 +64,8 @@ void ARWCharacterPlayer::BeginPlay()
 	// 각 Client마다 생성된 이후에 지정해주어야 하기 때문에, BeginPlay에서 지정
 	UCanvasRenderTarget2D* MinimapCanvasRenderTarget = UCanvasRenderTarget2D::CreateCanvasRenderTarget2D(GetWorld(), UCanvasRenderTarget2D::StaticClass(), 1024, 1024);
 	MiniMapSceneCapture->TextureTarget = MinimapCanvasRenderTarget;
+
+	
 }
 
 
@@ -73,13 +75,13 @@ void ARWCharacterPlayer::OnRep_PlayerState()
 	
 }
 
-void ARWCharacterPlayer::PossessedBy(AController* NewController)
+	void ARWCharacterPlayer::PossessedBy(AController* NewController)
 {
 
 	Super::PossessedBy(NewController);
-	ARWPlayerState* RWPS = GetPlayerState<ARWPlayerState>();
-
 	
+	
+	ARWPlayerState* RWPS = GetPlayerState<ARWPlayerState>();
 	if(RWPS)
 	{
 		ASC = RWPS->GetAbilitySystemComponent();
@@ -97,6 +99,7 @@ void ARWCharacterPlayer::PossessedBy(AController* NewController)
 		APlayerController* PlayerController = CastChecked<APlayerController>(NewController);
 		PlayerController->ConsoleCommand(TEXT("showdebug abilitysystem"));
 	}
+	
 }
 
 

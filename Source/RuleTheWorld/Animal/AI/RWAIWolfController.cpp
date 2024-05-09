@@ -7,6 +7,12 @@
 
 ARWAIWolfController::ARWAIWolfController()
 {
+	// Black Board
+	static ConstructorHelpers::FObjectFinder<UBlackboardData> BlackBoardRef(TEXT("/Script/AIModule.BlackboardData'/Game/RuleTheWorld/Animal/AI/BB/BB_Wolf.BB_Wolf'"));
+	if(BlackBoardRef.Object)
+	{
+		BlackboardAsset = BlackBoardRef.Object;
+	}
 	
 	// Behavior Tree
 	static ConstructorHelpers::FObjectFinder<UBehaviorTree> BehaviorTreeRef(TEXT("/Script/AIModule.BehaviorTree'/Game/RuleTheWorld/Animal/AI/BT/BT_Wolf.BT_Wolf'"));
@@ -14,7 +20,6 @@ ARWAIWolfController::ARWAIWolfController()
 	{
 		BehaviorTreeAsset = BehaviorTreeRef.Object;
 	}
-	
 }
 
 void ARWAIWolfController::OnPossess(APawn* InPawn)
@@ -29,10 +34,6 @@ void ARWAIWolfController::OnPossess(APawn* InPawn)
 		}
 		
 		BlackboardComponent = GetBlackboardComponent();
-		
-		
 	}
-
-	
 }
 

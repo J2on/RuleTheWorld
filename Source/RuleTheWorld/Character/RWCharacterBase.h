@@ -5,16 +5,19 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Interface/RWAnimationAttackInterface.h"
+#include "Interface/RWCharacterWidgetInterface.h"
 #include "RWCharacterBase.generated.h"
 
 UCLASS()
-class RULETHEWORLD_API ARWCharacterBase : public ACharacter, public IRWAnimationAttackInterface
+class RULETHEWORLD_API ARWCharacterBase : public ACharacter, public IRWAnimationAttackInterface, public IRWCharacterWidgetInterface
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
 	ARWCharacterBase();
+
+	virtual void PostInitializeComponents() override;
 
 // Bounding Box
 protected:
@@ -46,9 +49,19 @@ protected:
 // Dead Section
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Stat, Meta = (AllowPrivateAccess = "true"))
 	TObjectPtr<class UAnimMontage> DeadMontage;
-
+	
 	virtual void SetDead();
 	void PlayDeadAnimation();
 
 	float DeadEventDelayTime = 5.0f;
+
+// Starving Section
+	virtual void SetStarving();
+	
+// Stat Section
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Stat)
+	TObjectPtr<class URWCharacterStatComponent> StatComponent;
+
+	// interface 구현
+	virtual void SetUpCharacterWidget(class URWMainWidget* MainWidget) override;
 };

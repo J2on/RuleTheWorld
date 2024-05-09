@@ -12,12 +12,7 @@
 
 ARWAnimalAIController::ARWAnimalAIController()
 {
-	// Black Board
-	static ConstructorHelpers::FObjectFinder<UBlackboardData> BlackBoardRef(TEXT("/Script/AIModule.BlackboardData'/Game/RuleTheWorld/Animal/AI/BB/BB_Wolf.BB_Wolf'"));
-	if(BlackBoardRef.Object)
-	{
-		BlackboardAsset = BlackBoardRef.Object;
-	}
+	
 
 	// AI Perception
 	AIPerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("AI Perception"));

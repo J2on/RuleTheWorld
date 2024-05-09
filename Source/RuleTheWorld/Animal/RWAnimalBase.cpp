@@ -31,6 +31,9 @@ ARWAnimalBase::ARWAnimalBase()
 	// AI Controller Possess
 	// AIControllerClass <- BP에서 설정
 	AutoPossessAI = EAutoPossessAI::PlacedInWorldOrSpawned;
+
+	// Spawn시에 Collision이 있어도 생성되도록 설정 
+	SpawnCollisionHandlingMethod = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 }
 
 // Called when the game starts or when spawned

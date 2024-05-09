@@ -3,7 +3,10 @@
 #include "Game/RWGameMode.h"
 
 #include "RWGameState.h"
-#include "Animal/RWAnimalWolf.h"
+
+#include "Animal/RWAnimalBase.h"
+
+
 #include "GameFramework/GameState.h"
 #include "GameFramework/PlayerState.h"
 #include "Player/RWPlayerController.h"
@@ -46,12 +49,27 @@ ARWGameMode::ARWGameMode()
 		PlayerStateClass = PlayerStateClassRef.Class;
 	}
 
-	// Set Wolf Class
-	static ConstructorHelpers::FClassFinder<ARWAnimalWolf> WolfClassRef(TEXT("/Game/RuleTheWorld/Animal/BP_Wolf.BP_Wolf_C"));
+	// Set Animal Class
+	static ConstructorHelpers::FClassFinder<ARWAnimalBase> WolfClassRef(TEXT("/Game/RuleTheWorld/Animal/BP_Wolf.BP_Wolf_C"));
 	if(WolfClassRef.Class)
 	{
 		WolfClass = WolfClassRef.Class;
 	}
+	AnimalClasses.Add(WolfClass);
+		
+	static ConstructorHelpers::FClassFinder<ARWAnimalBase> PigClassRef(TEXT("/Game/RuleTheWorld/Animal/BP_Pig.BP_Pig_C"));
+	if(PigClassRef.Class)
+	{
+		PigClass = PigClassRef.Class;
+	}
+	AnimalClasses.Add(PigClass);
+	
+	static ConstructorHelpers::FClassFinder<ARWAnimalBase> FoxClassRef(TEXT("/Game/RuleTheWorld/Animal/BP_Fox.BP_Fox_C"));
+	if(FoxClassRef.Class)
+	{
+		FoxClass = FoxClassRef.Class;
+	}
+	AnimalClasses.Add(FoxClass);
 	
 	// Day
 	CurrentTime = START_TIME;
@@ -59,36 +77,41 @@ ARWGameMode::ARWGameMode()
 	DayProgressPercent = START_TIME / ONE_DAY;
 
 	// Animal
-	MaxWolfNum = 5;
-	CurrentWolfNum = 0;
+	// Set Initial Value
+	AnimalMaxNumMap.Add(WolfClass, 3);
+	AnimalMaxNumMap.Add(PigClass, 10);
+	AnimalMaxNumMap.Add(FoxClass, 1);
+
+	AnimalCurrentNumMap.Add(WolfClass, 0);
+	AnimalCurrentNumMap.Add(PigClass, 0);
+	AnimalCurrentNumMap.Add(FoxClass, 0);
 }
 
 void ARWGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SpawnWolf();
+	// First Day Setting
+	DayChangeSpawnAnimals();
 }
 
 void ARWGameMode::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-		
-	UpdateDate(DeltaSeconds);
+	UpdateTime(DeltaSeconds);
 }
 
-void ARWGameMode::UpdateDate(float DeltaSeconds)
+void ARWGameMode::UpdateTime(float DeltaSeconds)
 {
 	CurrentTime += DeltaSeconds;
+
 	// Day Change
 	if(CurrentTime >= ONE_DAY)
 	{
-		DayScore++;
-		CurrentTime -= ONE_DAY;
-		UpdateMaxWolfNum();
-		SpawnWolf();
+		DayChange();
 		UE_LOG(LogTemp, Log, TEXT("Game State - Day : %d CurrentTime : %f ProgressPercent : %f"), DayScore, CurrentTime, DayProgressPercent);
 	}
+	
 	// 하루가 얼마나 지났는지 퍼센트로 표시
 	DayProgressPercent = 100 * (CurrentTime / ONE_DAY);
 	CurrentHour = CurrentTime / ONE_HOUR;
@@ -110,30 +133,50 @@ int32 ARWGameMode::GetDayScore() const
 	return DayScore;
 }
 
-
-void ARWGameMode::SpawnWolf()
+void ARWGameMode::DayChange()
 {
-	for(int i = 0; i < MaxWolfNum - CurrentWolfNum; i++)
+	DayScore++;
+	// 24시간 초과 시 00부터 시작하도록
+	CurrentTime -= ONE_DAY;
+	// Spawn Animal
+	UpdateMaxWolfNum();
+	DayChangeSpawnAnimals();
+}
+
+
+void ARWGameMode::DayChangeSpawnAnimals()
+{
+	for(auto& AnimalClass : AnimalClasses)
 	{
-		FVector SpawnLocation = FVector(100.0f, 100.0f, 100.0f);
-		FRotator SpawnRotation = FRotator(0.0f, 0.0f, 0.0f);
-		GetWorld()->SpawnActor<ACharacter>(WolfClass, SpawnLocation, SpawnRotation);
-		CurrentWolfNum++;
-		UE_LOG(LogTemp, Log, TEXT("Spawn Wolf"));
+		for(int i = 0; i < AnimalMaxNumMap[AnimalClass] - AnimalCurrentNumMap[AnimalClass]; i++)
+		{
+			FRandomStream RandomStream;
+			
+			FVector SpawnLocation = FVector(100.0f + RandomStream.FRandRange(0.f, 100.f), 100.0f + RandomStream.FRandRange(0.f, 100.f), 100.0f  + RandomStream.FRandRange(0.f, 100.f));
+			FRotator SpawnRotation = FRotator(0.0f, 0.0f, 0.0f);
+			GetWorld()->SpawnActor<ACharacter>(AnimalClass, SpawnLocation, SpawnRotation);
+		
+			AnimalCurrentNumMap[AnimalClass]++;
+		
+			UE_LOG(LogTemp, Log, TEXT("GameMode : Spawn %s"), *AnimalClass->GetName());
+		}
 	}
+	
 }
 
 void ARWGameMode::UpdateMaxWolfNum()
 {
-	MaxWolfNum += 2;
+	// 구현 필요
 }
 
 
-void ARWGameMode::DecreaseCurrentWolfNum()
+void ARWGameMode::DecreaseCurrentAnimalNum(ARWAnimalBase* Animal)
 {
-	if(CurrentWolfNum > 0)
+	TSubclassOf<ARWAnimalBase> AnimalClass = Animal->GetClass();
+	
+	if(AnimalCurrentNumMap[AnimalClass] > 0)
 	{
-		CurrentWolfNum--;
+		AnimalCurrentNumMap[AnimalClass]--;
 	}
 }
 
