@@ -8,7 +8,7 @@
 
 
 
-constexpr float START_TIME_CLIENT = 120.f; // Game Start 06:00 
+constexpr float START_TIME_CLIENT = 100.f; // Game Start 06:00 
 constexpr float ONE_DAY_CLIENT = 480.f; // 8min(Real Time) = 1Day / 1min = 3Hours / 20sec = 1Hour
 constexpr int ONE_HOUR_CLIENT = 20;
 

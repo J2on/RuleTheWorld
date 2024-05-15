@@ -143,11 +143,12 @@ void ARWGameMode::DayChange()
 	DayChangeSpawnAnimals();
 }
 
-
+// 분리
 void ARWGameMode::DayChangeSpawnAnimals()
 {
 	for(auto& AnimalClass : AnimalClasses)
 	{
+		// Map 순회 , 하나의 Map
 		for(int i = 0; i < AnimalMaxNumMap[AnimalClass] - AnimalCurrentNumMap[AnimalClass]; i++)
 		{
 			FRandomStream RandomStream;
